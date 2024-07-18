@@ -41,6 +41,11 @@ else()
   message(STATUS "Configuring Shaderc to avoid building tests.")
 endif()
 
+option(SHADERC_SKIP_GLSLC "Skip building glslc" ${SHADERC_SKIP_GLSLC})
+if(NOT ${SHADERC_SKIP_GLSLC})
+  set(SHADERC_ENABLE_GLSLC ON)
+endif()
+
 option(SHADERC_SKIP_EXAMPLES "Skip building examples" ${SHADERC_SKIP_EXAMPLES})
 if(NOT ${SHADERC_SKIP_EXAMPLES})
   set(SHADERC_ENABLE_EXAMPLES ON)
@@ -113,7 +118,7 @@ add_custom_target(add-copyright
 if(MSVC)
   option(SHADERC_ENABLE_SHARED_CRT
           "Use the shared CRT instead of the static CRT"
-		  OFF)
+      OFF)
   if (SHADERC_ENABLE_SHARED_CRT)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
   else()
@@ -128,7 +133,9 @@ add_subdirectory(third_party)
 
 add_subdirectory(libshaderc_util)
 add_subdirectory(libshaderc)
-add_subdirectory(glslc)
+if(${SHADERC_ENABLE_GLSLC})
+    add_subdirectory(glslc)
+endif()
 if(${SHADERC_ENABLE_EXAMPLES})
     add_subdirectory(examples)
 endif()
